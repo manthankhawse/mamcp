@@ -14,12 +14,18 @@ export function EncryptedMorseCodeAppComponent() {
   const [history, setHistory] = useState([]);
   const [key, setKey] = useState("")
   const [toastMessage, setToastMessage] = useState("");
+  const [toastColor, setToastColor] = useState("red");
   const [showToast, setShowToast] = useState(false);
   const [decrypted, setDecrypted] = useState(false);
 
-  const showErrorToast = (message) => {
+  const showToastMessage = (message) => {
     setToastMessage(message);
     setShowToast(true);
+    if(message==="Decrypted"){
+      setToastColor("green");
+    }else{
+      setToastColor("red");
+    }
     setTimeout(() => setShowToast(false), 3000);
   };
 
@@ -54,12 +60,12 @@ function decrypt(text, secret) {
 
 const decryptMessages = () => {
   if (key !== "SECRET") {
-    showErrorToast("Incorrect key! Please try again.");
+    showToastMessage("Incorrect key! Please try again.");
     return;
   }
 
   if(decrypted){
-    showErrorToast("Messages already decrypted");
+    showToastMessage("Messages already decrypted");
     return;
   }
 
@@ -71,6 +77,7 @@ const decryptMessages = () => {
   setHistory(newHistory);
   setReceivedMessage(newHistory[0]?.message || "");
   setDecrypted(true);
+  showToastMessage("Decrypted");
 };
   
 
@@ -119,7 +126,15 @@ const decryptMessages = () => {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <Card className="w-full max-w-4xl bg-gray-800 border-gray-700">
       {showToast && (
-          <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md flex items-center space-x-2">
+          <div className={`fixed top-4 right-4 ${
+            toastColor === 'red'
+              ? 'bg-red-500'
+              : toastColor === 'green'
+              ? 'bg-green-500'
+              : toastColor === 'blue'
+              ? 'bg-blue-500'
+              : 'bg-gray-500'
+          } text-white p-4 rounded shadow-md flex items-center space-x-2`}>
             <AlertCircle />
             <span>{toastMessage}</span>
           </div>
